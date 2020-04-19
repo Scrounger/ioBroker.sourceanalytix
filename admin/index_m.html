@@ -32,8 +32,58 @@
 	<script type="text/javascript">
 		var unitConfig = [];
 		var pricesConfig = [];
+		var unitCat = [];
+		var priceCat = [];
+
+		
+		/**
+		// initialize dropdown menu for table function
+		* If class as identifier is, you have to reinitialise all select elements.
+		 * @param {string }selector - id or class name, id: #myID, class: .myClass
+		 * @param {array} data - as array where the data has to be sorted in which order you like to display them
+		 */
+		 function fillSelect(selector, data) {
+			$(selector).unbind('change');
+
+			let selectInstance = M.FormSelect.getInstance($(selector));
+			if (selectInstance) {
+				selectInstance.destroy();
+			}
+
+			$(selector).empty();
+			$(selector).append('<option vlaue="" selected>Choose</option>');
+
+			for (let d in data) {
+				$(selector).append('<option vlaue="' + data[d] + '">' + data[d] + '</option>');
+			}
+
+			instances = M.FormSelect.init($(selector));
+
+			$(selector).on('change', (event) => {
+				_onChange();
+			})
+		
+		}
+
+		function loopArray(settings){
+			for (var units in settings.unitConfig) {
+				console.log(settings.unitConfig[units].uName)
+				unitCat.push(settings.unitConfig[units].uName)
+			}
+			fillSelect('#elements-select', unitCat);
+
+			// reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
+			if (M) M.updateTextFields();
+
+			//initialize dropdowns
+			$('.dropdown-trigger').dropdown();
+
+		}
+
+
 		// This will be called by the admin adapter when the settings page loads
 		function load(settings, onChange) {
+			loopArray(settings);
 			// example: select elements with id=key and class=value and insert value
 			if (!settings) return;
 			$('.value').each(function () {
@@ -93,10 +143,8 @@
 				<ul class="tabs">
 					<li class="tab col s3"><a href="#tab-main" class="translate active">Main settings</a></li>
 					<li class="tab col s3"><a href="#tab-calculations" class="translate active">calculations</a></li>
-					<!--
 					<li class="tab col s3"><a href="#tab-unitConfig" class="translate active">Unit definitions</a></li>
 					<li class="tab col s3"><a href="#tab-pricesConfig" class="translate active">Price definitions</a>
-					-->
 					</li>
 				</ul>
 			</div>
@@ -108,6 +156,17 @@
 				<p class="translate title">Analyse the whole year</p>
 
 				<div class="row">
+
+
+
+					<div class="input-field col s3">
+						<select id="elements-select">
+							<option value="" disabled selected>Choose option</option>
+						</select>
+						<label for="elements-select" class="translate">Select</label>
+					</div>
+
+					
 					<div class="input-field col s2">
 						<input type="checkbox" class="value" id="store_days" />
 						<span class="translate">Days</span>
@@ -284,7 +343,7 @@
 										<th data-name="uName" style="width: 10%" class="translate">Unit Name</th>
 										<th data-name="uDes" style="width: 40%" class="translate">Description</th>
 										<th data-name="uStore" style="width: 10%" class="translate">Store as</th>
-										<th data-name="uFactor" style="width: 20%" class="translate">Calculation Factor
+										<th data-type="number" data-name="uFactor" style="width: 20%" class="translate">Calculation Factor
 										</th>
 										<th data-buttons="delete up down" style="width: 120px"></th>
 									</tr>
@@ -311,8 +370,8 @@
 									<tr>
 										<th data-name="uCat" style="width: 20%" class="translate">Cathegorie</th>
 										<th data-name="uDes" style="width: 30%" class="translate">Description</th>
-										<th data-name="uPpU" style="width: 10%" class="translate">Price p/unit</th>
-										<th data-name="uPpM" style="width: 10%" class="translate">price p/m</th>
+										<th data-type="number" data-name="uPpU" style="width: 10%" class="translate">Price p/unit</th>
+										<th data-type="number" data-name="uPpM" style="width: 10%" class="translate">price p/m</th>
 										<th data-buttons="delete up down" style="width: 120px"></th>
 									</tr>
 								</thead>
